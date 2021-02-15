@@ -1,9 +1,5 @@
 package org.knowm.xchange.bitfinex.service;
 
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.knowm.xchange.Exchange;
 import org.knowm.xchange.bitfinex.dto.BitfinexException;
@@ -11,34 +7,15 @@ import org.knowm.xchange.bitfinex.v1.BitfinexOrderType;
 import org.knowm.xchange.bitfinex.v1.BitfinexUtils;
 import org.knowm.xchange.bitfinex.v1.dto.account.BitfinexWithdrawalRequest;
 import org.knowm.xchange.bitfinex.v1.dto.account.BitfinexWithdrawalResponse;
-import org.knowm.xchange.bitfinex.v1.dto.trade.BitfinexAccountInfosResponse;
-import org.knowm.xchange.bitfinex.v1.dto.trade.BitfinexActiveCreditsRequest;
-import org.knowm.xchange.bitfinex.v1.dto.trade.BitfinexActivePositionsResponse;
-import org.knowm.xchange.bitfinex.v1.dto.trade.BitfinexCancelAllOrdersRequest;
-import org.knowm.xchange.bitfinex.v1.dto.trade.BitfinexCancelOfferRequest;
-import org.knowm.xchange.bitfinex.v1.dto.trade.BitfinexCancelOrderMultiRequest;
-import org.knowm.xchange.bitfinex.v1.dto.trade.BitfinexCancelOrderRequest;
-import org.knowm.xchange.bitfinex.v1.dto.trade.BitfinexCreditResponse;
-import org.knowm.xchange.bitfinex.v1.dto.trade.BitfinexFundingTradeResponse;
-import org.knowm.xchange.bitfinex.v1.dto.trade.BitfinexLimitOrder;
-import org.knowm.xchange.bitfinex.v1.dto.trade.BitfinexNewOfferRequest;
-import org.knowm.xchange.bitfinex.v1.dto.trade.BitfinexNewOrder;
-import org.knowm.xchange.bitfinex.v1.dto.trade.BitfinexNewOrderMultiRequest;
-import org.knowm.xchange.bitfinex.v1.dto.trade.BitfinexNewOrderMultiResponse;
-import org.knowm.xchange.bitfinex.v1.dto.trade.BitfinexNewOrderRequest;
-import org.knowm.xchange.bitfinex.v1.dto.trade.BitfinexNonceOnlyRequest;
-import org.knowm.xchange.bitfinex.v1.dto.trade.BitfinexOfferStatusRequest;
-import org.knowm.xchange.bitfinex.v1.dto.trade.BitfinexOfferStatusResponse;
-import org.knowm.xchange.bitfinex.v1.dto.trade.BitfinexOrderFlags;
-import org.knowm.xchange.bitfinex.v1.dto.trade.BitfinexOrderStatusRequest;
-import org.knowm.xchange.bitfinex.v1.dto.trade.BitfinexOrderStatusResponse;
-import org.knowm.xchange.bitfinex.v1.dto.trade.BitfinexOrdersHistoryRequest;
-import org.knowm.xchange.bitfinex.v1.dto.trade.BitfinexPastFundingTradesRequest;
-import org.knowm.xchange.bitfinex.v1.dto.trade.BitfinexPastTradesRequest;
-import org.knowm.xchange.bitfinex.v1.dto.trade.BitfinexReplaceOrderRequest;
-import org.knowm.xchange.bitfinex.v1.dto.trade.BitfinexTradeResponse;
+import org.knowm.xchange.bitfinex.v1.dto.trade.*;
 import org.knowm.xchange.bitfinex.v2.dto.EmptyRequest;
+import org.knowm.xchange.bitfinex.v2.dto.trade.ActiveFundingOrder;
 import org.knowm.xchange.bitfinex.v2.dto.trade.ActiveOrder;
+import org.knowm.xchange.bitfinex.v2.dto.trade.CancelAllFundingOrdersRequest;
+import org.knowm.xchange.bitfinex.v2.dto.trade.CancelAllFundingOrdersResponse;
+import org.knowm.xchange.bitfinex.v2.dto.trade.FundingOfferRequest;
+import org.knowm.xchange.bitfinex.v2.dto.trade.FundingOfferRequest.FundingType;
+import org.knowm.xchange.bitfinex.v2.dto.trade.FundingOfferResponse;
 import org.knowm.xchange.bitfinex.v2.dto.trade.OrderTrade;
 import org.knowm.xchange.bitfinex.v2.dto.trade.Position;
 import org.knowm.xchange.bitfinex.v2.dto.trade.Trade;
@@ -49,6 +26,12 @@ import org.knowm.xchange.dto.trade.FloatingRateLoanOrder;
 import org.knowm.xchange.dto.trade.LimitOrder;
 import org.knowm.xchange.dto.trade.MarketOrder;
 import org.knowm.xchange.exceptions.ExchangeException;
+
+import javax.annotation.Nullable;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.List;
 
 public class BitfinexTradeServiceRaw extends BitfinexBaseService {
 
@@ -534,5 +517,25 @@ public class BitfinexTradeServiceRaw extends BitfinexBaseService {
 
     return bitfinexV2.getOrderTrades(
         exchange.getNonceFactory(), apiKey, signatureV2, symbol, orderId, EmptyRequest.INSTANCE);
+  }
+
+  public List<ActiveFundingOrder> getActiveFundingOrders(String pair) throws IOException {
+    return bitfinexV2.getActiveFundingOrders(exchange.getNonceFactory(), apiKey, signatureV2, pair, EmptyRequest.INSTANCE);
+  }
+
+  public CancelAllFundingOrdersResponse cancelAllFundingOrders(@Nullable String pair) throws IOException {
+    return bitfinexV2.cancelAllFundingOrders(exchange.getNonceFactory(), apiKey, signatureV2, new CancelAllFundingOrdersRequest(pair));
+  }
+
+  public FundingOfferResponse submitNewFundingOffer(FundingType fundingType, String pair, double amount, double rate,int period, int flags) throws IOException {
+    final FundingOfferRequest fundingOfferRequest = FundingOfferRequest.builder()
+            .fundingType(fundingType)
+            .symbol(pair)
+            .amount(String.valueOf(amount))
+            .dailyRate(String.valueOf(rate))
+            .period(period)
+            .flags(flags)
+            .build();
+    return bitfinexV2.submitNewFundingOffer(exchange.getNonceFactory(), apiKey, signatureV2, fundingOfferRequest);
   }
 }
