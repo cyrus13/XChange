@@ -610,11 +610,28 @@ public class BitfinexTradeServiceRaw extends BitfinexBaseService {
   }
 
   public List<ActiveFundingOrder> getActiveFundingOrders(String pair) throws IOException {
-    return bitfinexV2.getActiveFundingOrders(exchange.getNonceFactory(), apiKey, signatureV2, pair, EmptyRequest.INSTANCE);
+    return decorateApiCall(
+            () ->
+                    bitfinexV2.getActiveFundingOrders(
+                            exchange.getNonceFactory(),
+                            apiKey,
+                            signatureV2,
+                            pair,
+                            EmptyRequest.INSTANCE))
+            .withRateLimiter(rateLimiter(BITFINEX_RATE_LIMITER))
+            .call();
   }
 
   public CancelAllFundingOrdersResponse cancelAllFundingOrders(@Nullable String pair) throws IOException {
-    return bitfinexV2.cancelAllFundingOrders(exchange.getNonceFactory(), apiKey, signatureV2, new CancelAllFundingOrdersRequest(pair));
+    return decorateApiCall(
+            () ->
+                    bitfinexV2.cancelAllFundingOrders(
+                            exchange.getNonceFactory(),
+                            apiKey,
+                            signatureV2,
+                            new CancelAllFundingOrdersRequest(pair)))
+            .withRateLimiter(rateLimiter(BITFINEX_RATE_LIMITER))
+            .call();
   }
 
   public FundingOfferResponse submitNewFundingOffer(FundingType fundingType, String pair, double amount, double rate,int period, int flags) throws IOException {
@@ -626,6 +643,15 @@ public class BitfinexTradeServiceRaw extends BitfinexBaseService {
             .period(period)
             .flags(flags)
             .build();
-    return bitfinexV2.submitNewFundingOffer(exchange.getNonceFactory(), apiKey, signatureV2, fundingOfferRequest);
+
+    return decorateApiCall(
+            () ->
+                bitfinexV2.submitNewFundingOffer(
+                        exchange.getNonceFactory(),
+                        apiKey,
+                        signatureV2,
+                        fundingOfferRequest))
+            .withRateLimiter(rateLimiter(BITFINEX_RATE_LIMITER))
+            .call();
   }
 }
