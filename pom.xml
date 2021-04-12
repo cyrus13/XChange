@@ -212,6 +212,7 @@
     <module>xchange-stream-service-core</module>
     <module>xchange-stream-service-netty</module>
     <module>xchange-stream-service-pubnub</module>
+      <module>xchange-safetrade</module>
   </modules>
 
   <ciManagement>

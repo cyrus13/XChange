@@ -1,0 +1,7 @@
+SafeTrade Exchange API specification V1
+======================================
+
+Api Documentation
+URL: https://github.com/Fair-Exchange/safecoinwiki/wiki/SafeTrade-API
+
+
