@@ -17,6 +17,13 @@ public class INtegrationTestTemporary {
     SafeTradeMarketDataServiceRaw marketDataService =
         (SafeTradeMarketDataServiceRaw) safeTradeExchange.getMarketDataService();
     System.out.println(marketDataService.getExchangeSymbols());
+  }
+
+  @Test
+  public void testGetDepth() throws IOException {
+    Exchange safeTradeExchange = ExchangeFactory.INSTANCE.createExchange(SafeTradeExchange.class);
+    SafeTradeMarketDataServiceRaw marketDataService =
+            (SafeTradeMarketDataServiceRaw) safeTradeExchange.getMarketDataService();
     System.out.println(marketDataService.getMarketDepth("ethbtc"));
   }
 }
