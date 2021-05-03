@@ -3,9 +3,8 @@ package org.knowm.xchange.safetrade;
 import org.junit.Test;
 import org.knowm.xchange.Exchange;
 import org.knowm.xchange.ExchangeFactory;
-import org.knowm.xchange.currency.CurrencyPair;
+import org.knowm.xchange.safetrade.service.SafeTradeAccountServiceRaw;
 import org.knowm.xchange.safetrade.service.SafeTradeMarketDataServiceRaw;
-import org.knowm.xchange.service.marketdata.MarketDataService;
 
 import java.io.IOException;
 

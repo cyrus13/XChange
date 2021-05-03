@@ -42,3 +42,4 @@ GTAGS
 GRTAGS
 GPATH
 GSYMS
+/xchange-safetrade/src/test/java/org/knowm/xchange/safetrade/AuthenticatedINtegrationTestTemporary.java

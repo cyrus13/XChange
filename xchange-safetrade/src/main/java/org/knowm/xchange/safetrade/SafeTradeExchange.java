@@ -7,20 +7,29 @@ import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.dto.meta.CurrencyPairMetaData;
 import org.knowm.xchange.dto.meta.ExchangeMetaData;
 import org.knowm.xchange.exceptions.ExchangeException;
+import org.knowm.xchange.safetrade.service.SafeTradeAccountService;
 import org.knowm.xchange.safetrade.service.SafeTradeMarketDataService;
 import org.knowm.xchange.safetrade.service.SafeTradeMarketDataServiceRaw;
 import org.knowm.xchange.safetrade.v2.dto.marketdata.SafeTradeMarketInfo;
+import org.knowm.xchange.utils.nonce.CurrentTimeIncrementalNonceFactory;
+import org.knowm.xchange.utils.nonce.TimestampIncrementingNonceFactory;
+import si.mazi.rescu.SynchronizedValueFactory;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 public class SafeTradeExchange extends BaseExchange implements Exchange {
 
+  private final SynchronizedValueFactory<Long> safeTradeNonceFactory = new CurrentTimeIncrementalNonceFactory(TimeUnit.MILLISECONDS);
+
   @Override
   protected void initServices() {
+
     this.marketDataService = new SafeTradeMarketDataService(this);
+    this.accountService = new SafeTradeAccountService(this);
   }
 
   @Override
@@ -58,5 +67,10 @@ public class SafeTradeExchange extends BaseExchange implements Exchange {
     }
 
     exchangeMetaData = new ExchangeMetaData(currencyPairs, null, null, null, null);
+  }
+
+  @Override
+  public SynchronizedValueFactory<Long> getNonceFactory() {
+    return safeTradeNonceFactory;
   }
 }
