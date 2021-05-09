@@ -10,6 +10,7 @@ import org.knowm.xchange.exceptions.ExchangeException;
 import org.knowm.xchange.safetrade.service.SafeTradeAccountService;
 import org.knowm.xchange.safetrade.service.SafeTradeMarketDataService;
 import org.knowm.xchange.safetrade.service.SafeTradeMarketDataServiceRaw;
+import org.knowm.xchange.safetrade.service.SafeTradeTradeService;
 import org.knowm.xchange.safetrade.v2.dto.marketdata.SafeTradeMarketInfo;
 import org.knowm.xchange.utils.nonce.CurrentTimeIncrementalNonceFactory;
 import org.knowm.xchange.utils.nonce.TimestampIncrementingNonceFactory;
@@ -30,6 +31,7 @@ public class SafeTradeExchange extends BaseExchange implements Exchange {
 
     this.marketDataService = new SafeTradeMarketDataService(this);
     this.accountService = new SafeTradeAccountService(this);
+    this.tradeService = new SafeTradeTradeService(this);
   }
 
   @Override
