@@ -248,6 +248,25 @@ public class BitfinexMarketDataServiceRaw extends BitfinexBaseService {
         .call();
   }
 
+  public org.knowm.xchange.bitfinex.v2.dto.marketdata.BitfinexTicker getBitfinexFundingTickerV2(
+          String fundingPair) throws IOException {
+    List<ArrayNode> tickers =
+            decorateApiCall(
+                    () ->
+                            bitfinexV2.getTickers(
+                                    fundingPair))
+                    .withRetry(retry("market-ticker"))
+                    .withRateLimiter(rateLimiter(BITFINEX_RATE_LIMITER))
+                    .call();
+    org.knowm.xchange.bitfinex.v2.dto.marketdata.BitfinexTicker[] ticker =
+            BitfinexAdapters.adoptBitfinexTickers(tickers);
+    if (ticker.length == 0) {
+      throw new BitfinexException("Unknown Symbol");
+    } else {
+      return ticker[0];
+    }
+  }
+
   /**
    * @see https://docs.bitfinex.com/reference#rest-public-stats1 The Stats endpoint provides various
    *     statistics on a specified trading pair or funding currency. Use the available keys to
